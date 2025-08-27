@@ -236,7 +236,7 @@ def draw_circuit(circuit, start_pos=(0, 0), direction='right', spacing=1) -> sch
     return drawing
 
 
-def draw_custom_circuit(circuit, frequency_range=(0.1, 1e5, 50), title="Custom Circuit"):
+def plot_circuit(circuit, frequency_range=(0.1, 1e5, 50), title="Custom Circuit"):
     """
     Draws a representation of a CustomCircuit from impedance.py package and plots its Bode plot
     and Nyquist plot.
@@ -326,15 +326,3 @@ def draw_custom_circuit(circuit, frequency_range=(0.1, 1e5, 50), title="Custom C
         'nyquist_plot': nyquist_fig
     }
 
-# Example usage
-if __name__ == "__main__":
-    from impedance.models.circuits import CustomCircuit
-
-    # Define a custom circuit
-    circuit = CustomCircuit(
-        initial_guess=[1e-6, 1e-5, 1e3, 1e-6, 1],
-        circuit='R0-p(R1,C1)-p(R2,C2)',
-        name='Example Circuit'
-    )
-
-    draw_custom_circuit(circuit)
