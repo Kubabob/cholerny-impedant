@@ -1,0 +1,18 @@
+08.19.2025, 12:46:00
+...\par\21, R(QR).par
+
+  1                             = detect the sign of Zim         
+  1                             = modulus weighting factor   
+1.000                        = sample area in square cm 
+R(QR)
+5.040e-03          2     = chi squared, # of iters 
+
+index   fixed    parameter      start               end        rel. std. error (%) 
+-------  ------  ----------     --------            -----      ------------ 
+    1       0          R            28,4           2,84          4,956 
+    2       0        Q-Yo      0,0006853      0,0006854             12 
+    3       0         Q-n            0,8         0,7464          2,507 
+    4       0          R           70,48          70,49          4,546 
+-------------------------------------------------------------------------------------
+
+Measurement errors in impedance data = < 7,099 pct.        
