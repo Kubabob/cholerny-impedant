@@ -10,4 +10,5 @@ dependencies = [
     "pandas>=2.3.2",
     "pyqt6>=6.9.1",
     "schemdraw>=0.21",
+    "scikit-learn>=1.7.1",
 ]

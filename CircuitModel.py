@@ -1,6 +1,7 @@
 from impedance.models.circuits import circuits
 import schemdraw
 import schemdraw.elements as elm
+import numpy as np
 
 def draw_parallel_elements(drawing, elements, start_pos=(0, 0), direction='right', spacing=1, labels=None) -> schemdraw.Drawing:
     """
@@ -235,7 +236,6 @@ def draw_circuit(circuit, start_pos=(0, 0), direction='right', spacing=1) -> sch
 
     return drawing
 
-
 def plot_circuit(circuit, frequency_range=(0.1, 1e5, 50), title="Custom Circuit"):
     """
     Draws a representation of a CustomCircuit from impedance.py package and plots its Bode plot
@@ -301,18 +301,31 @@ def plot_circuit(circuit, frequency_range=(0.1, 1e5, 50), title="Custom Circuit"
     marker_indices = np.linspace(0, len(frequencies)-1, 5, dtype=int)
     for idx in marker_indices:
         ax3.annotate(f"{frequencies[idx]:.1e} Hz",
-                     xy=(Z_real[idx], Z_imag[idx]),
+                     xy=(Z_real[idx], -Z_imag[idx]),
                      xytext=(5, 5),
                      textcoords='offset points',
                      fontsize=8)
+
+    # Set better axis limits to reduce empty space
+    x_min, x_max = min(Z_real), max(Z_real)
+    y_min, y_max = min(-Z_imag), max(-Z_imag)
+    
+    # Calculate padding - use a smaller percentage to reduce empty space
+    padding = 0.05 * max(x_max - x_min, y_max - y_min)
+    
+    # Make the plot more square by setting equal range on both axes
+    x_center = (x_min + x_max) / 2
+    y_center = (y_min + y_max) / 2
+    max_range = max(x_max - x_min, y_max - y_min) / 2 + padding
+    
+    ax3.set_xlim(x_center - max_range, x_center + max_range)
+    ax3.set_ylim(y_center - 0.5*max_range, y_center + 0.5*max_range)
+    ax3.set_aspect('equal')
 
     ax3.set_xlabel('$Z_{real}$ (Ω)')
     ax3.set_ylabel('$-Z_{imag}$ (Ω)')
     ax3.set_title(f'{title} - Nyquist Plot')
     ax3.grid(True)
-
-    # Make axes equal to ensure circle arcs look like circles
-    ax3.axis('equal')
 
     # Add origin lines
     ax3.axhline(y=0, color='k', linestyle='--', alpha=0.3)
@@ -326,3 +339,65 @@ def plot_circuit(circuit, frequency_range=(0.1, 1e5, 50), title="Custom Circuit"
         'nyquist_plot': nyquist_fig
     }
 
+
+def chi2(Z_exp, Z_pred):
+    """
+    Calculate chi-squared value between experimental and predicted impedance data.
+    
+    Parameters:
+    -----------
+    Z_exp : array-like
+        Experimental impedance data (complex numbers)
+    Z_pred : array-like
+        Predicted impedance data from the model (complex numbers)
+    
+    Returns:
+    --------
+    float
+        Chi-squared value
+    """
+    # Calculate the real and imaginary residuals
+    real_residuals = np.real(Z_exp) - np.real(Z_pred)
+    imag_residuals = np.imag(Z_exp) - np.imag(Z_pred)
+    
+    # Sum of squared residuals
+    chi2 = (real_residuals**2 + imag_residuals**2).sum()
+    
+    return chi2
+
+
+def show_parameters(circuit):
+    """
+    Display the parameters of an impedance.py circuit model in a tabular format.
+    
+    Parameters:
+    -----------
+    circuit : impedance.models.circuits.Circuit
+        The circuit model whose parameters are to be displayed
+    
+    Returns:
+    --------
+    str
+        A formatted string containing the parameter table
+    """
+    
+    # Get parameter names and values
+    param_names = circuit.get_param_names()
+    param_values = circuit.parameters_
+    
+    # Create a dictionary to store parameters and values
+    params_dict = {}
+    for name, value in zip(param_names[0], param_values):
+        # Convert name to string if it's not a string (e.g., if it's a list)
+        key = str(name) if not isinstance(name, str) else name
+        params_dict[key] = f"{value:.6g}"  # Format to 6 significant digits
+    
+    # Return a formatted string representation for non-notebook environments
+    max_param_len = max(len(param) for param in param_names)
+    table_str = "Circuit Parameters:\n"
+    table_str += "=" * (max_param_len + 15) + "\n"
+    
+    for param, value in params_dict.items():
+        table_str += f"{param:<{max_param_len}} | {value}\n"
+    
+    print(table_str)
