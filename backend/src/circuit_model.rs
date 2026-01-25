@@ -1,0 +1,3 @@
+struct Circuit {
+    data: Impl,
+}

@@ -1,3 +1,4 @@
+mod circuit_model;
 mod impedance_data;
 mod utils;
 
