@@ -84,4 +84,8 @@ impl ImpedanceData {
             z_pred: None,
         })
     }
+
+    fn () {
+
+    }
 }
