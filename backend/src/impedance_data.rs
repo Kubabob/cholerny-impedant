@@ -38,6 +38,18 @@ impl ImpedanceData {
 
     fn read_csv(self, file_path: String) -> Result<Self, Box<dyn Error>> {
         let file_path = Path::new(&file_path);
+
+        assert!(
+            &["txt", "csv"].contains(
+                &file_path
+                    .extension()
+                    .expect("{file_path:?} does not have extension")
+                    .to_ascii_lowercase()
+                    .to_str()
+                    .expect("Could not convert OsStr to str")
+            )
+        );
+
         let file = File::open(file_path).expect("Could not open file {file_path:?}");
         let mut reader = Reader::from_reader(file);
 
