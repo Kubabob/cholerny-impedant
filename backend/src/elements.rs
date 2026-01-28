@@ -61,6 +61,12 @@ pub enum Element {
         a: f32,
         b: f32,
     }, // Macrohomogeneous porous electrode model from Paasch et al.
+    Series {
+        elements: Vec<Element>,
+    },
+    Parallel {
+        elements: Vec<Element>,
+    },
 }
 
 impl Element {
@@ -103,6 +109,18 @@ impl Element {
                     Complex32::new(1e10, 0.0)
                 };
                 A / (beta * beta.tanh()) + B / (beta * sinh_beta)
+            }
+            Element::Series { elements } => elements
+                .iter()
+                .fold(Complex32 { re: 0., im: 0. }, |acc, val| {
+                    acc + val.impedance(f)
+                }),
+            Element::Parallel { elements } => {
+                1. / elements
+                    .iter()
+                    .fold(Complex32 { re: 0., im: 0. }, |acc, val| {
+                        acc + val.impedance(f).inv()
+                    })
             }
         }
     }

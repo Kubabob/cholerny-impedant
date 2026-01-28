@@ -184,6 +184,7 @@
   },
   "active": "9d4caa1518c0fcf4",
   "lastOpenFiles": [
+    "General schema.md",
     "backend/target/debug/incremental/backend-3nwpmai80norv/s-hf4sipq6go-0r58ygb-working/work-products.bin",
     "backend/target/debug/incremental/backend-3nwpmai80norv/s-hf4sipq6go-0r58ygb-working/query-cache.bin",
     "backend/target/debug/incremental/backend-3nwpmai80norv/s-hf4sipq6go-0r58ygb-working/dep-graph.part.bin",
@@ -194,8 +195,6 @@
     "backend/target/debug/incremental/backend-1griwhvbnniw0/s-hf4sipq6gi-0wux7xr-working/dep-graph.part.bin",
     "backend/target/debug/incremental/backend-1griwhvbnniw0/s-hf4sipq6gi-0wux7xr-working/dep-graph.bin",
     "backend/target/debug/incremental/backend-1griwhvbnniw0/s-hf4sipq6gi-0wux7xr-working",
-    "backend/target/debug/incremental/backend-1griwhvbnniw0/s-hf4sipq6gi-0wux7xr.lock",
-    "General schema.png",
-    "General schema.md"
+    "General schema.png"
   ]
 }
