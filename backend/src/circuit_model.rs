@@ -1,19 +1,18 @@
 use regex::{Error, Regex};
-use std::{char, rc::Rc};
 
 use crate::elements::Element;
 
-struct CircuitNode {
-    current: Rc<[Element]>,
-    next: Option<Rc<[Element]>>,
+struct CircuitNode<'a> {
+    current: Vec<Element>,
+    next: Option<Vec<&'a Element>>,
 }
 
-impl CircuitNode {
-    fn current(self) -> Rc<[Element]> {
-        self.current.clone()
+impl<'a> CircuitNode<'a> {
+    fn current(self) -> Vec<Element> {
+        self.current
     }
 
-    fn next(self) -> Option<Rc<[Element]>> {
+    fn next(self) -> Option<Vec<&'a Element>> {
         self.next
     }
 }
