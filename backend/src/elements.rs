@@ -61,12 +61,6 @@ pub enum Element {
         a: f32,
         b: f32,
     }, // Macrohomogeneous porous electrode model from Paasch et al.
-    Series {
-        elements: Vec<Element>,
-    },
-    Parallel {
-        elements: Vec<Element>,
-    },
 }
 
 impl Element {
@@ -110,18 +104,69 @@ impl Element {
                 };
                 A / (beta * beta.tanh()) + B / (beta * sinh_beta)
             }
-            Element::Series { elements } => elements
-                .iter()
-                .fold(Complex32 { re: 0., im: 0. }, |acc, val| {
-                    acc + val.impedance(f)
-                }),
-            Element::Parallel { elements } => {
-                1. / elements
-                    .iter()
-                    .fold(Complex32 { re: 0., im: 0. }, |acc, val| {
-                        acc + val.impedance(f).inv()
-                    })
-            }
+        }
+    }
+
+    pub fn from_str(element_str: &str, params_complex: &[Complex32], params_f32: &[f32]) -> Self {
+        match element_str {
+            "R" => Self::R {
+                R: params_complex[0],
+            },
+            "C" => Self::C {
+                C: params_complex[0],
+            },
+            "L" => Self::L {
+                L: params_complex[0],
+            },
+            "W" => Self::W {
+                Aw: params_complex[0],
+            },
+            "Wo" => Self::Wo {
+                Z0: params_complex[0],
+                tau: params_f32[0],
+            },
+            "Ws" => Self::Ws {
+                Z0: params_complex[0],
+                tau: params_f32[0],
+            },
+            "CPE" => Self::CPE {
+                Q: params_complex[0],
+                alpha: params_f32[0],
+            },
+            "La" => Self::La {
+                L: params_complex[0],
+                alpha: params_f32[0],
+            },
+            "G" => Self::G {
+                R_G: params_complex[0],
+                t_G: params_f32[0],
+            },
+            "Gs" => Self::Gs {
+                R_G: params_complex[0],
+                t_G: params_f32[0],
+                phi: params_f32[1],
+            },
+            "K" => Self::K {
+                R: params_complex[0],
+                tau_k: params_f32[0],
+            },
+            "Zarc" => Self::Zarc {
+                R: params_complex[0],
+                tau_k: params_f32[0],
+                gamma: params_f32[1],
+            },
+            "TLMQ" => Self::TLMQ {
+                Rion: params_complex[0],
+                Qs: params_f32[0],
+                gamma: params_f32[1],
+            },
+            "T" => Self::T {
+                A: params_complex[0],
+                B: params_complex[1],
+                a: params_f32[0],
+                b: params_f32[1],
+            },
+            _ => panic!("Unknown element type: {}", element_str),
         }
     }
 }
