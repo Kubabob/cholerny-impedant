@@ -64,8 +64,8 @@ pub enum Element {
 }
 
 impl Element {
-    pub fn impedance(&self, f: f32) -> Complex32 {
-        let omega = 2. * PI * f;
+    pub fn impedance(&self, frequency: f32) -> Complex32 {
+        let omega = 2. * PI * frequency;
         let i = Complex32::new(0.0, 1.0);
 
         match self {
