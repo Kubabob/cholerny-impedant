@@ -4,63 +4,20 @@ use num::complex::Complex32;
 
 #[allow(non_snake_case)]
 pub enum Element {
-    R {
-        R: Complex32,
-    }, // Resistor
-    C {
-        C: Complex32,
-    }, // Capacitor
-    L {
-        L: Complex32,
-    }, // Inductor
-    W {
-        Aw: Complex32,
-    }, // Semi-infinite Warburg element
-    Wo {
-        Z0: Complex32,
-        tau: f32,
-    }, // Open (finite-space) Warburg element
-    Ws {
-        Z0: Complex32,
-        tau: f32,
-    }, // Short (finite-length) Warburg element
-    CPE {
-        Q: Complex32,
-        alpha: f32,
-    }, // Constant phase element
-    La {
-        L: Complex32,
-        alpha: f32,
-    }, // Modified inductance element
-    G {
-        R_G: Complex32,
-        t_G: f32,
-    }, // Gerischer element
-    Gs {
-        R_G: Complex32,
-        t_G: f32,
-        phi: f32,
-    }, // Finite-length Gerischer element
-    K {
-        R: Complex32,
-        tau_k: f32,
-    }, // RC element for use in lin-KK model
-    Zarc {
-        R: Complex32,
-        tau_k: f32,
-        gamma: f32,
-    }, // RQ element rewritten with resistance and time constant as parameters. Equivalent to a Cole-Cole relaxation in dielectrics.
-    TLMQ {
-        Rion: Complex32,
-        Qs: f32,
-        gamma: f32,
-    }, // Simplified transmission-line model
-    T {
-        A: Complex32,
-        B: Complex32,
-        a: f32,
-        b: f32,
-    }, // Macrohomogeneous porous electrode model from Paasch et al.
+    R { R: f32 },                            // Resistor
+    C { C: f32 },                            // Capacitor
+    L { L: f32 },                            // Inductor
+    W { Aw: f32 },                           // Semi-infinite Warburg element
+    Wo { Z0: f32, tau: f32 },                // Open (finite-space) Warburg element
+    Ws { Z0: f32, tau: f32 },                // Short (finite-length) Warburg element
+    CPE { Q: f32, alpha: f32 },              // Constant phase element
+    La { L: f32, alpha: f32 },               // Modified inductance element
+    G { R_G: f32, t_G: f32 },                // Gerischer element
+    Gs { R_G: f32, t_G: f32, phi: f32 },     // Finite-length Gerischer element
+    K { R: f32, tau_k: f32 },                // RC element for use in lin-KK model
+    Zarc { R: f32, tau_k: f32, gamma: f32 }, // RQ element rewritten with resistance and time constant as parameters. Equivalent to a Cole-Cole relaxation in dielectrics.
+    TLMQ { Rion: f32, Qs: f32, gamma: f32 }, // Simplified transmission-line model
+    T { A: f32, B: f32, a: f32, b: f32 }, // Macrohomogeneous porous electrode model from Paasch et al.
 }
 
 impl Element {
@@ -69,7 +26,7 @@ impl Element {
         let i = Complex32::new(0.0, 1.0);
 
         match self {
-            Element::R { R } => *R,
+            Element::R { R } => *R + 0. * i,
             Element::C { C } => 1.0 / (C * i * omega),
             Element::L { L } => L * i * omega,
             Element::W { Aw } => Aw * Complex32::new(1.0, -1.0) / omega.sqrt(),
@@ -107,64 +64,56 @@ impl Element {
         }
     }
 
-    pub fn from_str(element_str: &str, params_complex: &[Complex32], params_f32: &[f32]) -> Self {
+    pub fn from_str(element_str: &str, params: &[f32]) -> Self {
         match element_str {
-            "R" => Self::R {
-                R: params_complex[0],
-            },
-            "C" => Self::C {
-                C: params_complex[0],
-            },
-            "L" => Self::L {
-                L: params_complex[0],
-            },
-            "W" => Self::W {
-                Aw: params_complex[0],
-            },
+            "R" => Self::R { R: params[0] },
+            "C" => Self::C { C: params[0] },
+            "L" => Self::L { L: params[0] },
+            "W" => Self::W { Aw: params[0] },
             "Wo" => Self::Wo {
-                Z0: params_complex[0],
-                tau: params_f32[0],
+                Z0: params[0],
+                tau: params[1],
             },
             "Ws" => Self::Ws {
-                Z0: params_complex[0],
-                tau: params_f32[0],
+                Z0: params[0],
+                tau: params[1],
             },
             "CPE" => Self::CPE {
-                Q: params_complex[0],
-                alpha: params_f32[0],
+                Q: params[0],
+                alpha: params[1],
             },
             "La" => Self::La {
-                L: params_complex[0],
-                alpha: params_f32[0],
+                L: params[0],
+                alpha: params[1],
             },
             "G" => Self::G {
-                R_G: params_complex[0],
-                t_G: params_f32[0],
+                R_G: params[0],
+                t_G: params[1],
             },
             "Gs" => Self::Gs {
-                R_G: params_complex[0],
-                t_G: params_f32[0],
-                phi: params_f32[1],
+                R_G: params[0],
+                t_G: params[1],
+                phi: params[2],
             },
             "K" => Self::K {
-                R: params_complex[0],
-                tau_k: params_f32[0],
+                R: params[0],
+                tau_k: params[1],
             },
             "Zarc" => Self::Zarc {
-                R: params_complex[0],
-                tau_k: params_f32[0],
-                gamma: params_f32[1],
+                R: params[0],
+                tau_k: params[1],
+                gamma: params[2],
             },
             "TLMQ" => Self::TLMQ {
-                Rion: params_complex[0],
-                Qs: params_f32[0],
-                gamma: params_f32[1],
+                Rion: params[0],
+                Qs: params[1],
+                gamma: params[2],
             },
             "T" => Self::T {
-                A: params_complex[0],
-                B: params_complex[1],
-                a: params_f32[0],
-                b: params_f32[1],
+                A: params[0],
+                B: params[1],
+                a: params[2],
+                b: params[3],
             },
             _ => panic!("Unknown element type: {}", element_str),
         }

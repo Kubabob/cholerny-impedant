@@ -87,14 +87,44 @@ mod tests {
         elements.insert(
             "R",
             vec![
-                Element::R { R: 1. + i },
-                Element::R { R: 1. + i },
-                Element::R { R: 1. + i },
+                Element::R { R: 1. },
+                Element::R { R: 1. },
+                Element::R { R: 1. },
             ]
             .into_iter(),
         );
 
         let mut circuit_model = CircuitModel::new(String::from("R(RR)"), elements);
-        assert_eq!(circuit_model.impedance(1.), Complex32 { re: 1.5, im: 1.5 });
+        assert_eq!(circuit_model.impedance(1.), Complex32 { re: 1.5, im: 0. });
+    }
+
+    #[test]
+    fn case_1() {
+        let i = Complex32 { re: 0., im: 1. };
+        let mut elements = HashMap::new();
+        let freq = 1.;
+        elements.insert(
+            "R",
+            vec![
+                Element::R { R: 0.223 },
+                Element::R { R: 1.519 },
+                Element::R { R: 3.507 },
+            ]
+            .into_iter(),
+        );
+
+        elements.insert(
+            "C",
+            vec![Element::C { C: 0.0025 }, Element::C { C: 0.0814 }].into_iter(),
+        );
+
+        let mut circuit_model = CircuitModel::new(String::from("R(RC)(RC)"), elements);
+        assert_eq!(
+            circuit_model.impedance(freq),
+            Complex32 {
+                re: 0.19,
+                im: -0.019
+            }
+        );
     }
 }
