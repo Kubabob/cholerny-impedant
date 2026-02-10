@@ -25,9 +25,42 @@ impl<'a> CircuitModel<'a> {
         for idx in 0..self.circuit.len() {
             if self.circuit.get(idx..idx + 1) == Some("(") {
                 depth += 1;
-                layers.push(Vec::new());
+                // Add new layer
+                if layers.len() <= depth {
+                    layers.push(Vec::new());
+                }
                 continue;
             } else if self.circuit.get(idx..idx + 1) == Some(")") {
+                // Calculate impedance for current depth
+                let layer_impedance: Complex32;
+                if depth % 2 == 0 {
+                    layer_impedance = layers
+                        .get(depth)
+                        .expect("This layer should exist {depth}")
+                        .iter()
+                        .sum();
+                } else {
+                    layer_impedance = 1.
+                        / layers
+                            .get(depth)
+                            .expect("This layer should exist {depth}")
+                            .iter()
+                            .map(|impedance| 1. / impedance)
+                            .sum::<Complex32>();
+                }
+
+                // Add current layers impedance to upper level
+                layers
+                    .get_mut(depth - 1)
+                    .expect("This layer should exist {depth}")
+                    .push(layer_impedance);
+
+                // Clear current layer
+                layers
+                    .get_mut(depth)
+                    .expect("This layer should exist {depth}")
+                    .clear();
+
                 depth -= 1;
                 continue;
             } else {
@@ -49,30 +82,8 @@ impl<'a> CircuitModel<'a> {
             }
         }
 
-        // Calculate impedances for parallel parts of circuit
-        for layer_idx in (1..layers.len()).rev() {
-            let layer_impedance: Complex32 = 1.
-                / layers
-                    .get(layer_idx)
-                    .expect("This layer should exist {layer_idx}")
-                    .iter()
-                    .map(|impedance| 1. / impedance)
-                    .sum::<Complex32>();
-
-            layers
-                .get_mut(layer_idx - 1)
-                .expect("This layer should exist {layer_idx}")
-                .push(layer_impedance);
-        }
-
         // Return sum of series part of circuit
-        layers
-            .get(0)
-            .expect("Layer 0 should exist")
-            .iter()
-            .fold(Complex32 { re: 0., im: 0. }, |acc, impedance| {
-                acc + impedance
-            })
+        layers.get(0).expect("Layer 0 should exist").iter().sum()
     }
 }
 
@@ -106,24 +117,24 @@ mod tests {
         elements.insert(
             "R",
             vec![
-                Element::R { R: 0.223 },
-                Element::R { R: 1.519 },
-                Element::R { R: 3.507 },
+                Element::R { R: 1. },
+                Element::R { R: 2. },
+                Element::R { R: 4. },
             ]
             .into_iter(),
         );
 
         elements.insert(
             "C",
-            vec![Element::C { C: 0.0025 }, Element::C { C: 0.0814 }].into_iter(),
+            vec![Element::C { C: 3. }, Element::C { C: 5. }].into_iter(),
         );
 
         let mut circuit_model = CircuitModel::new(String::from("R(RC)(RC)"), elements);
         assert_eq!(
             circuit_model.impedance(freq),
             Complex32 {
-                re: 0.19,
-                im: -0.019
+                re: 1.0016595,
+                im: -0.08484332
             }
         );
     }
@@ -167,7 +178,13 @@ mod tests {
         );
 
         let mut circuit_model = CircuitModel::new(String::from("R(RR(RR))"), elements);
-        assert_eq!(circuit_model.impedance(freq), Complex32 { re: 1.4, im: 0. });
+        assert_eq!(
+            circuit_model.impedance(freq),
+            Complex32 {
+                re: 1.8571429,
+                im: 0.
+            }
+        );
     }
 
     #[test]
@@ -234,7 +251,10 @@ mod tests {
         let mut circuit_model = CircuitModel::new(String::from("R(R(R(RR)))"), elements);
         assert_eq!(
             circuit_model.impedance(freq),
-            Complex32 { re: 2.45, im: 0. }
+            Complex32 {
+                re: 2.4461539,
+                im: 0.
+            }
         );
     }
 
@@ -257,7 +277,10 @@ mod tests {
         let mut circuit_model = CircuitModel::new(String::from("R(R(RR))"), elements);
         assert_eq!(
             circuit_model.impedance(freq),
-            Complex32 { re: 2.56, im: 0. }
+            Complex32 {
+                re: 2.5555556,
+                im: 0.
+            }
         );
     }
 
@@ -284,7 +307,10 @@ mod tests {
         let mut circuit_model = CircuitModel::new(String::from("R(R(R(R(RR))))(RR)"), elements);
         assert_eq!(
             circuit_model.impedance(freq),
-            Complex32 { re: 6.23, im: 0. }
+            Complex32 {
+                re: 6.2291317,
+                im: 0.
+            }
         );
     }
 
@@ -310,7 +336,10 @@ mod tests {
         let mut circuit_model = CircuitModel::new(String::from("R(RR(RR)(RR))"), elements);
         assert_eq!(
             circuit_model.impedance(freq),
-            Complex32 { re: 1.98, im: 0. }
+            Complex32 {
+                re: 1.9790795,
+                im: 0.
+            }
         );
     }
 
