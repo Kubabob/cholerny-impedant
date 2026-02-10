@@ -1,7 +1,4 @@
-use std::{
-    collections::{HashMap, vec_deque::Iter},
-    vec::IntoIter,
-};
+use std::{collections::HashMap, vec::IntoIter};
 
 use num::complex::Complex32;
 
@@ -93,7 +90,6 @@ mod tests {
 
     #[test]
     fn case_0() {
-        let i = Complex32 { re: 0., im: 1. };
         let mut elements = HashMap::new();
         elements.insert(
             "R",
@@ -111,7 +107,6 @@ mod tests {
 
     #[test]
     fn case_1() {
-        let i = Complex32 { re: 0., im: 1. };
         let mut elements = HashMap::new();
         let freq = 1.;
         elements.insert(
@@ -141,7 +136,6 @@ mod tests {
 
     #[test]
     fn case_2() {
-        let i = Complex32 { re: 0., im: 1. };
         let mut elements = HashMap::new();
         let freq = 1.;
         elements.insert(
@@ -162,7 +156,6 @@ mod tests {
 
     #[test]
     fn case_3() {
-        let i = Complex32 { re: 0., im: 1. };
         let mut elements = HashMap::new();
         let freq = 1.;
         elements.insert(
@@ -189,7 +182,6 @@ mod tests {
 
     #[test]
     fn case_4() {
-        let i = Complex32 { re: 0., im: 1. };
         let mut elements = HashMap::new();
         let freq = 1.;
         elements.insert(
@@ -208,7 +200,6 @@ mod tests {
 
     #[test]
     fn case_5() {
-        let i = Complex32 { re: 0., im: 1. };
         let mut elements = HashMap::new();
         let freq = 1.;
         elements.insert(
@@ -233,7 +224,6 @@ mod tests {
 
     #[test]
     fn case_6() {
-        let i = Complex32 { re: 0., im: 1. };
         let mut elements = HashMap::new();
         let freq = 1.;
         elements.insert(
@@ -260,7 +250,6 @@ mod tests {
 
     #[test]
     fn case_7() {
-        let i = Complex32 { re: 0., im: 1. };
         let mut elements = HashMap::new();
         let freq = 1.;
         elements.insert(
@@ -286,7 +275,6 @@ mod tests {
 
     #[test]
     fn case_8() {
-        let i = Complex32 { re: 0., im: 1. };
         let mut elements = HashMap::new();
         let freq = 1.;
         elements.insert(
@@ -316,7 +304,6 @@ mod tests {
 
     #[test]
     fn case_9() {
-        let i = Complex32 { re: 0., im: 1. };
         let mut elements = HashMap::new();
         let freq = 1.;
         elements.insert(
@@ -345,7 +332,6 @@ mod tests {
 
     #[test]
     fn case_10() {
-        let i = Complex32 { re: 0., im: 1. };
         let mut elements = HashMap::new();
         let freq = 1.;
         elements.insert(
