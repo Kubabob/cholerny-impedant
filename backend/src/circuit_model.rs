@@ -127,4 +127,217 @@ mod tests {
             }
         );
     }
+
+    #[test]
+    fn case_2() {
+        let i = Complex32 { re: 0., im: 1. };
+        let mut elements = HashMap::new();
+        let freq = 1.;
+        elements.insert(
+            "R",
+            vec![
+                Element::R { R: 1. },
+                Element::R { R: 2. },
+                Element::R { R: 2. },
+                Element::R { R: 3. },
+                Element::R { R: 3. },
+            ]
+            .into_iter(),
+        );
+
+        let mut circuit_model = CircuitModel::new(String::from("R(RR)(RR)"), elements);
+        assert_eq!(circuit_model.impedance(freq), Complex32 { re: 3.5, im: 0. });
+    }
+
+    #[test]
+    fn case_3() {
+        let i = Complex32 { re: 0., im: 1. };
+        let mut elements = HashMap::new();
+        let freq = 1.;
+        elements.insert(
+            "R",
+            vec![
+                Element::R { R: 1. },
+                Element::R { R: 2. },
+                Element::R { R: 2. },
+                Element::R { R: 3. },
+                Element::R { R: 3. },
+            ]
+            .into_iter(),
+        );
+
+        let mut circuit_model = CircuitModel::new(String::from("R(RR(RR))"), elements);
+        assert_eq!(circuit_model.impedance(freq), Complex32 { re: 1.4, im: 0. });
+    }
+
+    #[test]
+    fn case_4() {
+        let i = Complex32 { re: 0., im: 1. };
+        let mut elements = HashMap::new();
+        let freq = 1.;
+        elements.insert(
+            "R",
+            vec![
+                Element::R { R: 1. },
+                Element::R { R: 2. },
+                Element::R { R: 3. },
+            ]
+            .into_iter(),
+        );
+
+        let mut circuit_model = CircuitModel::new(String::from("R(R)(R)"), elements);
+        assert_eq!(circuit_model.impedance(freq), Complex32 { re: 6., im: 0. });
+    }
+
+    #[test]
+    fn case_5() {
+        let i = Complex32 { re: 0., im: 1. };
+        let mut elements = HashMap::new();
+        let freq = 1.;
+        elements.insert(
+            "R",
+            vec![
+                Element::R { R: 1. },
+                Element::R { R: 2. },
+                Element::R { R: 3. },
+            ]
+            .into_iter(),
+        );
+
+        let mut circuit_model = CircuitModel::new(String::from("(RRR)"), elements);
+        assert_eq!(
+            circuit_model.impedance(freq),
+            Complex32 {
+                re: 0.54545456,
+                im: 0.
+            }
+        );
+    }
+
+    #[test]
+    fn case_6() {
+        let i = Complex32 { re: 0., im: 1. };
+        let mut elements = HashMap::new();
+        let freq = 1.;
+        elements.insert(
+            "R",
+            vec![
+                Element::R { R: 1. },
+                Element::R { R: 2. },
+                Element::R { R: 3. },
+                Element::R { R: 4. },
+                Element::R { R: 5. },
+            ]
+            .into_iter(),
+        );
+
+        let mut circuit_model = CircuitModel::new(String::from("R(R(R(RR)))"), elements);
+        assert_eq!(
+            circuit_model.impedance(freq),
+            Complex32 { re: 2.45, im: 0. }
+        );
+    }
+
+    #[test]
+    fn case_7() {
+        let i = Complex32 { re: 0., im: 1. };
+        let mut elements = HashMap::new();
+        let freq = 1.;
+        elements.insert(
+            "R",
+            vec![
+                Element::R { R: 1. },
+                Element::R { R: 2. },
+                Element::R { R: 3. },
+                Element::R { R: 4. },
+            ]
+            .into_iter(),
+        );
+
+        let mut circuit_model = CircuitModel::new(String::from("R(R(RR))"), elements);
+        assert_eq!(
+            circuit_model.impedance(freq),
+            Complex32 { re: 2.56, im: 0. }
+        );
+    }
+
+    #[test]
+    fn case_8() {
+        let i = Complex32 { re: 0., im: 1. };
+        let mut elements = HashMap::new();
+        let freq = 1.;
+        elements.insert(
+            "R",
+            vec![
+                Element::R { R: 1. },
+                Element::R { R: 2. },
+                Element::R { R: 3. },
+                Element::R { R: 4. },
+                Element::R { R: 5. },
+                Element::R { R: 6. },
+                Element::R { R: 7. },
+                Element::R { R: 8. },
+            ]
+            .into_iter(),
+        );
+
+        let mut circuit_model = CircuitModel::new(String::from("R(R(R(R(RR))))(RR)"), elements);
+        assert_eq!(
+            circuit_model.impedance(freq),
+            Complex32 { re: 6.23, im: 0. }
+        );
+    }
+
+    #[test]
+    fn case_9() {
+        let i = Complex32 { re: 0., im: 1. };
+        let mut elements = HashMap::new();
+        let freq = 1.;
+        elements.insert(
+            "R",
+            vec![
+                Element::R { R: 1. },
+                Element::R { R: 2. },
+                Element::R { R: 3. },
+                Element::R { R: 4. },
+                Element::R { R: 5. },
+                Element::R { R: 6. },
+                Element::R { R: 7. },
+            ]
+            .into_iter(),
+        );
+
+        let mut circuit_model = CircuitModel::new(String::from("R(RR(RR)(RR))"), elements);
+        assert_eq!(
+            circuit_model.impedance(freq),
+            Complex32 { re: 1.98, im: 0. }
+        );
+    }
+
+    #[test]
+    fn case_10() {
+        let i = Complex32 { re: 0., im: 1. };
+        let mut elements = HashMap::new();
+        let freq = 1.;
+        elements.insert(
+            "R",
+            vec![
+                Element::R { R: 1. },
+                Element::R { R: 2. },
+                Element::R { R: 3. },
+                Element::R { R: 4. },
+                Element::R { R: 5. },
+            ]
+            .into_iter(),
+        );
+
+        let mut circuit_model = CircuitModel::new(String::from("R(RR)(RR)"), elements);
+        assert_eq!(
+            circuit_model.impedance(freq),
+            Complex32 {
+                re: 4.422222,
+                im: 0.
+            }
+        );
+    }
 }
