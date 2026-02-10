@@ -19,13 +19,15 @@ impl<'a> CircuitModel<'a> {
         let mut depth: usize = 0;
 
         // Create vector with vector of impedances
-        for idx in 0..self.circuit.len() {
+        let mut idx = 0;
+        while idx < self.circuit.len() {
             if self.circuit.get(idx..idx + 1) == Some("(") {
                 depth += 1;
                 // Add new layer
                 if layers.len() <= depth {
                     layers.push(Vec::new());
                 }
+                idx += 1;
                 continue;
             } else if self.circuit.get(idx..idx + 1) == Some(")") {
                 // Calculate impedance for current depth
@@ -59,18 +61,19 @@ impl<'a> CircuitModel<'a> {
                     .clear();
 
                 depth -= 1;
+                idx += 1;
                 continue;
             } else {
+                // Parse element identifier - try longer matches first
+                let (element_key, element_len) = Self::parse_element_at(&self.circuit, idx);
+                idx += element_len;
+
                 layers
                     .get_mut(depth)
                     .expect(&format!("Hashmap should have layer number {}", depth))
                     .push(
                         self.elements
-                            .get_mut(
-                                self.circuit
-                                    .get(idx..idx + 1)
-                                    .expect("Circuit should be long enough"),
-                            )
+                            .get_mut(element_key)
                             .expect("Element iterator should exist")
                             .next()
                             .expect("Element from iterator should exist")
@@ -81,6 +84,40 @@ impl<'a> CircuitModel<'a> {
 
         // Return sum of series part of circuit
         layers.get(0).expect("Layer 0 should exist").iter().sum()
+    }
+
+    /// Parses an element identifier at the given position in the circuit string.
+    /// Returns a tuple of (element_key, length) where element_key is the matched
+    /// element identifier and length is how many characters were consumed.
+    fn parse_element_at(circuit: &str, idx: usize) -> (&str, usize) {
+        // Try to match multi-character element names first (longest to shortest)
+        // 4-character elements: TLMQ, Zarc
+        if idx + 4 <= circuit.len() {
+            let four_char = &circuit[idx..idx + 4];
+            if four_char == "TLMQ" || four_char == "Zarc" {
+                return (four_char, 4);
+            }
+        }
+
+        // 3-character elements: CPE
+        if idx + 3 <= circuit.len() {
+            let three_char = &circuit[idx..idx + 3];
+            if three_char == "CPE" {
+                return (three_char, 3);
+            }
+        }
+
+        // 2-character elements: Wo, Ws, La, Gs
+        if idx + 2 <= circuit.len() {
+            let two_char = &circuit[idx..idx + 2];
+            if two_char == "Wo" || two_char == "Ws" || two_char == "La" || two_char == "Gs" {
+                return (two_char, 2);
+            }
+        }
+
+        // Single-character elements: R, C, L, W, G, K, T
+        let one_char = &circuit[idx..idx + 1];
+        (one_char, 1)
     }
 }
 
@@ -354,5 +391,84 @@ mod tests {
                 im: 0.
             }
         );
+    }
+
+    #[test]
+    fn case_multi_char_elements() {
+        let mut elements = HashMap::new();
+        let freq = 1.;
+
+        // Test CPE, R, and C elements
+        elements.insert("R", vec![Element::R { R: 100. }].into_iter());
+        elements.insert(
+            "CPE",
+            vec![Element::CPE {
+                Q: 1e-6,
+                alpha: 0.9,
+            }]
+            .into_iter(),
+        );
+        elements.insert("C", vec![Element::C { C: 1e-6 }].into_iter());
+
+        // Circuit: R in series with parallel combination of CPE and C
+        let mut circuit_model = CircuitModel::new(String::from("R(CPEC)"), elements);
+        let result = circuit_model.impedance(freq);
+
+        // Just verify it computes without panicking and returns a complex number
+        assert!(result.re.is_finite());
+        assert!(result.im.is_finite());
+    }
+
+    #[test]
+    fn case_warburg_elements() {
+        let mut elements = HashMap::new();
+        let freq = 1.;
+
+        // Test Wo (open Warburg) and Ws (short Warburg)
+        elements.insert("R", vec![Element::R { R: 50. }].into_iter());
+        elements.insert("Wo", vec![Element::Wo { Z0: 100., tau: 0.1 }].into_iter());
+        elements.insert("Ws", vec![Element::Ws { Z0: 100., tau: 0.1 }].into_iter());
+
+        // Circuit: R in series with Wo, parallel with Ws
+        let mut circuit_model = CircuitModel::new(String::from("RWo(Ws)"), elements);
+        let result = circuit_model.impedance(freq);
+
+        assert!(result.re.is_finite());
+        assert!(result.im.is_finite());
+    }
+
+    #[test]
+    fn case_complex_multi_char() {
+        let mut elements = HashMap::new();
+        let freq = 10.;
+
+        // Test TLMQ and Zarc elements
+        elements.insert("R", vec![Element::R { R: 10. }].into_iter());
+        elements.insert(
+            "TLMQ",
+            vec![Element::TLMQ {
+                Rion: 50.,
+                Qs: 1e-6,
+                gamma: 0.85,
+            }]
+            .into_iter(),
+        );
+        elements.insert(
+            "Zarc",
+            vec![Element::Zarc {
+                R: 100.,
+                tau_k: 0.01,
+                gamma: 0.9,
+            }]
+            .into_iter(),
+        );
+
+        // Circuit: R in series with parallel TLMQ and Zarc
+        let mut circuit_model = CircuitModel::new(String::from("R(TLMQZarc)"), elements);
+        let result = circuit_model.impedance(freq);
+
+        assert!(result.re.is_finite());
+        assert!(result.im.is_finite());
+        assert!(result.re > 0.); // Should have positive real part
     }
 }
