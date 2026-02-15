@@ -10,8 +10,12 @@ pub struct ImpedanceData {
 }
 
 impl ImpedanceData {
-    fn new() -> Self {
-        todo!()
+    fn new(frequencies: Vec<f32>, z_exp: Vec<Complex32>, z_pred: Option<Vec<Complex32>>) -> Self {
+        Self {
+            frequencies: frequencies,
+            z_exp: z_exp,
+            z_pred: z_pred,
+        }
     }
 
     fn validate(self) {
@@ -83,5 +87,11 @@ impl ImpedanceData {
             z_exp: z_exp,
             z_pred: None,
         })
+    }
+}
+
+impl Default for ImpedanceData {
+    fn default() -> Self {
+        Self::new(Vec::new(), Vec::new(), None)
     }
 }
