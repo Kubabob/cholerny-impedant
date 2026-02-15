@@ -125,350 +125,353 @@ impl<'a> CircuitModel<'a> {
 mod tests {
     use super::*;
 
-    #[test]
-    fn case_0() {
-        let mut elements = HashMap::new();
-        elements.insert(
-            "R",
-            vec![
-                Element::R { R: 1. },
-                Element::R { R: 1. },
-                Element::R { R: 1. },
-            ]
-            .into_iter(),
-        );
+    mod impedance {
+        use super::*;
+        #[test]
+        fn case_0() {
+            let mut elements = HashMap::new();
+            elements.insert(
+                "R",
+                vec![
+                    Element::R { R: 1. },
+                    Element::R { R: 1. },
+                    Element::R { R: 1. },
+                ]
+                .into_iter(),
+            );
 
-        let mut circuit_model = CircuitModel::new(String::from("R(RR)"), elements);
-        assert_eq!(circuit_model.impedance(1.), Complex32 { re: 1.5, im: 0. });
-    }
+            let mut circuit_model = CircuitModel::new(String::from("R(RR)"), elements);
+            assert_eq!(circuit_model.impedance(1.), Complex32 { re: 1.5, im: 0. });
+        }
 
-    #[test]
-    fn case_1() {
-        let mut elements = HashMap::new();
-        let freq = 1.;
-        elements.insert(
-            "R",
-            vec![
-                Element::R { R: 1. },
-                Element::R { R: 2. },
-                Element::R { R: 4. },
-            ]
-            .into_iter(),
-        );
+        #[test]
+        fn case_1() {
+            let mut elements = HashMap::new();
+            let freq = 1.;
+            elements.insert(
+                "R",
+                vec![
+                    Element::R { R: 1. },
+                    Element::R { R: 2. },
+                    Element::R { R: 4. },
+                ]
+                .into_iter(),
+            );
 
-        elements.insert(
-            "C",
-            vec![Element::C { C: 3. }, Element::C { C: 5. }].into_iter(),
-        );
+            elements.insert(
+                "C",
+                vec![Element::C { C: 3. }, Element::C { C: 5. }].into_iter(),
+            );
 
-        let mut circuit_model = CircuitModel::new(String::from("R(RC)(RC)"), elements);
-        assert_eq!(
-            circuit_model.impedance(freq),
-            Complex32 {
-                re: 1.0016595,
-                im: -0.08484332
-            }
-        );
-    }
+            let mut circuit_model = CircuitModel::new(String::from("R(RC)(RC)"), elements);
+            assert_eq!(
+                circuit_model.impedance(freq),
+                Complex32 {
+                    re: 1.0016595,
+                    im: -0.08484332
+                }
+            );
+        }
 
-    #[test]
-    fn case_2() {
-        let mut elements = HashMap::new();
-        let freq = 1.;
-        elements.insert(
-            "R",
-            vec![
-                Element::R { R: 1. },
-                Element::R { R: 2. },
-                Element::R { R: 2. },
-                Element::R { R: 3. },
-                Element::R { R: 3. },
-            ]
-            .into_iter(),
-        );
+        #[test]
+        fn case_2() {
+            let mut elements = HashMap::new();
+            let freq = 1.;
+            elements.insert(
+                "R",
+                vec![
+                    Element::R { R: 1. },
+                    Element::R { R: 2. },
+                    Element::R { R: 2. },
+                    Element::R { R: 3. },
+                    Element::R { R: 3. },
+                ]
+                .into_iter(),
+            );
 
-        let mut circuit_model = CircuitModel::new(String::from("R(RR)(RR)"), elements);
-        assert_eq!(circuit_model.impedance(freq), Complex32 { re: 3.5, im: 0. });
-    }
+            let mut circuit_model = CircuitModel::new(String::from("R(RR)(RR)"), elements);
+            assert_eq!(circuit_model.impedance(freq), Complex32 { re: 3.5, im: 0. });
+        }
 
-    #[test]
-    fn case_3() {
-        let mut elements = HashMap::new();
-        let freq = 1.;
-        elements.insert(
-            "R",
-            vec![
-                Element::R { R: 1. },
-                Element::R { R: 2. },
-                Element::R { R: 2. },
-                Element::R { R: 3. },
-                Element::R { R: 3. },
-            ]
-            .into_iter(),
-        );
+        #[test]
+        fn case_3() {
+            let mut elements = HashMap::new();
+            let freq = 1.;
+            elements.insert(
+                "R",
+                vec![
+                    Element::R { R: 1. },
+                    Element::R { R: 2. },
+                    Element::R { R: 2. },
+                    Element::R { R: 3. },
+                    Element::R { R: 3. },
+                ]
+                .into_iter(),
+            );
 
-        let mut circuit_model = CircuitModel::new(String::from("R(RR(RR))"), elements);
-        assert_eq!(
-            circuit_model.impedance(freq),
-            Complex32 {
-                re: 1.8571429,
-                im: 0.
-            }
-        );
-    }
+            let mut circuit_model = CircuitModel::new(String::from("R(RR(RR))"), elements);
+            assert_eq!(
+                circuit_model.impedance(freq),
+                Complex32 {
+                    re: 1.8571429,
+                    im: 0.
+                }
+            );
+        }
 
-    #[test]
-    fn case_4() {
-        let mut elements = HashMap::new();
-        let freq = 1.;
-        elements.insert(
-            "R",
-            vec![
-                Element::R { R: 1. },
-                Element::R { R: 2. },
-                Element::R { R: 3. },
-            ]
-            .into_iter(),
-        );
+        #[test]
+        fn case_4() {
+            let mut elements = HashMap::new();
+            let freq = 1.;
+            elements.insert(
+                "R",
+                vec![
+                    Element::R { R: 1. },
+                    Element::R { R: 2. },
+                    Element::R { R: 3. },
+                ]
+                .into_iter(),
+            );
 
-        let mut circuit_model = CircuitModel::new(String::from("R(R)(R)"), elements);
-        assert_eq!(circuit_model.impedance(freq), Complex32 { re: 6., im: 0. });
-    }
+            let mut circuit_model = CircuitModel::new(String::from("R(R)(R)"), elements);
+            assert_eq!(circuit_model.impedance(freq), Complex32 { re: 6., im: 0. });
+        }
 
-    #[test]
-    fn case_5() {
-        let mut elements = HashMap::new();
-        let freq = 1.;
-        elements.insert(
-            "R",
-            vec![
-                Element::R { R: 1. },
-                Element::R { R: 2. },
-                Element::R { R: 3. },
-            ]
-            .into_iter(),
-        );
+        #[test]
+        fn case_5() {
+            let mut elements = HashMap::new();
+            let freq = 1.;
+            elements.insert(
+                "R",
+                vec![
+                    Element::R { R: 1. },
+                    Element::R { R: 2. },
+                    Element::R { R: 3. },
+                ]
+                .into_iter(),
+            );
 
-        let mut circuit_model = CircuitModel::new(String::from("(RRR)"), elements);
-        assert_eq!(
-            circuit_model.impedance(freq),
-            Complex32 {
-                re: 0.54545456,
-                im: 0.
-            }
-        );
-    }
+            let mut circuit_model = CircuitModel::new(String::from("(RRR)"), elements);
+            assert_eq!(
+                circuit_model.impedance(freq),
+                Complex32 {
+                    re: 0.54545456,
+                    im: 0.
+                }
+            );
+        }
 
-    #[test]
-    fn case_6() {
-        let mut elements = HashMap::new();
-        let freq = 1.;
-        elements.insert(
-            "R",
-            vec![
-                Element::R { R: 1. },
-                Element::R { R: 2. },
-                Element::R { R: 3. },
-                Element::R { R: 4. },
-                Element::R { R: 5. },
-            ]
-            .into_iter(),
-        );
+        #[test]
+        fn case_6() {
+            let mut elements = HashMap::new();
+            let freq = 1.;
+            elements.insert(
+                "R",
+                vec![
+                    Element::R { R: 1. },
+                    Element::R { R: 2. },
+                    Element::R { R: 3. },
+                    Element::R { R: 4. },
+                    Element::R { R: 5. },
+                ]
+                .into_iter(),
+            );
 
-        let mut circuit_model = CircuitModel::new(String::from("R(R(R(RR)))"), elements);
-        assert_eq!(
-            circuit_model.impedance(freq),
-            Complex32 {
-                re: 2.4461539,
-                im: 0.
-            }
-        );
-    }
+            let mut circuit_model = CircuitModel::new(String::from("R(R(R(RR)))"), elements);
+            assert_eq!(
+                circuit_model.impedance(freq),
+                Complex32 {
+                    re: 2.4461539,
+                    im: 0.
+                }
+            );
+        }
 
-    #[test]
-    fn case_7() {
-        let mut elements = HashMap::new();
-        let freq = 1.;
-        elements.insert(
-            "R",
-            vec![
-                Element::R { R: 1. },
-                Element::R { R: 2. },
-                Element::R { R: 3. },
-                Element::R { R: 4. },
-            ]
-            .into_iter(),
-        );
+        #[test]
+        fn case_7() {
+            let mut elements = HashMap::new();
+            let freq = 1.;
+            elements.insert(
+                "R",
+                vec![
+                    Element::R { R: 1. },
+                    Element::R { R: 2. },
+                    Element::R { R: 3. },
+                    Element::R { R: 4. },
+                ]
+                .into_iter(),
+            );
 
-        let mut circuit_model = CircuitModel::new(String::from("R(R(RR))"), elements);
-        assert_eq!(
-            circuit_model.impedance(freq),
-            Complex32 {
-                re: 2.5555556,
-                im: 0.
-            }
-        );
-    }
+            let mut circuit_model = CircuitModel::new(String::from("R(R(RR))"), elements);
+            assert_eq!(
+                circuit_model.impedance(freq),
+                Complex32 {
+                    re: 2.5555556,
+                    im: 0.
+                }
+            );
+        }
 
-    #[test]
-    fn case_8() {
-        let mut elements = HashMap::new();
-        let freq = 1.;
-        elements.insert(
-            "R",
-            vec![
-                Element::R { R: 1. },
-                Element::R { R: 2. },
-                Element::R { R: 3. },
-                Element::R { R: 4. },
-                Element::R { R: 5. },
-                Element::R { R: 6. },
-                Element::R { R: 7. },
-                Element::R { R: 8. },
-            ]
-            .into_iter(),
-        );
+        #[test]
+        fn case_8() {
+            let mut elements = HashMap::new();
+            let freq = 1.;
+            elements.insert(
+                "R",
+                vec![
+                    Element::R { R: 1. },
+                    Element::R { R: 2. },
+                    Element::R { R: 3. },
+                    Element::R { R: 4. },
+                    Element::R { R: 5. },
+                    Element::R { R: 6. },
+                    Element::R { R: 7. },
+                    Element::R { R: 8. },
+                ]
+                .into_iter(),
+            );
 
-        let mut circuit_model = CircuitModel::new(String::from("R(R(R(R(RR))))(RR)"), elements);
-        assert_eq!(
-            circuit_model.impedance(freq),
-            Complex32 {
-                re: 6.2291317,
-                im: 0.
-            }
-        );
-    }
+            let mut circuit_model = CircuitModel::new(String::from("R(R(R(R(RR))))(RR)"), elements);
+            assert_eq!(
+                circuit_model.impedance(freq),
+                Complex32 {
+                    re: 6.2291317,
+                    im: 0.
+                }
+            );
+        }
 
-    #[test]
-    fn case_9() {
-        let mut elements = HashMap::new();
-        let freq = 1.;
-        elements.insert(
-            "R",
-            vec![
-                Element::R { R: 1. },
-                Element::R { R: 2. },
-                Element::R { R: 3. },
-                Element::R { R: 4. },
-                Element::R { R: 5. },
-                Element::R { R: 6. },
-                Element::R { R: 7. },
-            ]
-            .into_iter(),
-        );
+        #[test]
+        fn case_9() {
+            let mut elements = HashMap::new();
+            let freq = 1.;
+            elements.insert(
+                "R",
+                vec![
+                    Element::R { R: 1. },
+                    Element::R { R: 2. },
+                    Element::R { R: 3. },
+                    Element::R { R: 4. },
+                    Element::R { R: 5. },
+                    Element::R { R: 6. },
+                    Element::R { R: 7. },
+                ]
+                .into_iter(),
+            );
 
-        let mut circuit_model = CircuitModel::new(String::from("R(RR(RR)(RR))"), elements);
-        assert_eq!(
-            circuit_model.impedance(freq),
-            Complex32 {
-                re: 1.9790795,
-                im: 0.
-            }
-        );
-    }
+            let mut circuit_model = CircuitModel::new(String::from("R(RR(RR)(RR))"), elements);
+            assert_eq!(
+                circuit_model.impedance(freq),
+                Complex32 {
+                    re: 1.9790795,
+                    im: 0.
+                }
+            );
+        }
 
-    #[test]
-    fn case_10() {
-        let mut elements = HashMap::new();
-        let freq = 1.;
-        elements.insert(
-            "R",
-            vec![
-                Element::R { R: 1. },
-                Element::R { R: 2. },
-                Element::R { R: 3. },
-                Element::R { R: 4. },
-                Element::R { R: 5. },
-            ]
-            .into_iter(),
-        );
+        #[test]
+        fn case_10() {
+            let mut elements = HashMap::new();
+            let freq = 1.;
+            elements.insert(
+                "R",
+                vec![
+                    Element::R { R: 1. },
+                    Element::R { R: 2. },
+                    Element::R { R: 3. },
+                    Element::R { R: 4. },
+                    Element::R { R: 5. },
+                ]
+                .into_iter(),
+            );
 
-        let mut circuit_model = CircuitModel::new(String::from("R(RR)(RR)"), elements);
-        assert_eq!(
-            circuit_model.impedance(freq),
-            Complex32 {
-                re: 4.422222,
-                im: 0.
-            }
-        );
-    }
+            let mut circuit_model = CircuitModel::new(String::from("R(RR)(RR)"), elements);
+            assert_eq!(
+                circuit_model.impedance(freq),
+                Complex32 {
+                    re: 4.422222,
+                    im: 0.
+                }
+            );
+        }
 
-    #[test]
-    fn case_multi_char_elements() {
-        let mut elements = HashMap::new();
-        let freq = 1.;
+        #[test]
+        fn case_multi_char_elements() {
+            let mut elements = HashMap::new();
+            let freq = 1.;
 
-        // Test CPE, R, and C elements
-        elements.insert("R", vec![Element::R { R: 100. }].into_iter());
-        elements.insert(
-            "CPE",
-            vec![Element::CPE {
-                Q: 1e-6,
-                alpha: 0.9,
-            }]
-            .into_iter(),
-        );
-        elements.insert("C", vec![Element::C { C: 1e-6 }].into_iter());
+            // Test CPE, R, and C elements
+            elements.insert("R", vec![Element::R { R: 100. }].into_iter());
+            elements.insert(
+                "CPE",
+                vec![Element::CPE {
+                    Q: 1e-6,
+                    alpha: 0.9,
+                }]
+                .into_iter(),
+            );
+            elements.insert("C", vec![Element::C { C: 1e-6 }].into_iter());
 
-        // Circuit: R in series with parallel combination of CPE and C
-        let mut circuit_model = CircuitModel::new(String::from("R(CPEC)"), elements);
-        let result = circuit_model.impedance(freq);
+            // Circuit: R in series with parallel combination of CPE and C
+            let mut circuit_model = CircuitModel::new(String::from("R(CPEC)"), elements);
+            let result = circuit_model.impedance(freq);
 
-        // Just verify it computes without panicking and returns a complex number
-        assert!(result.re.is_finite());
-        assert!(result.im.is_finite());
-    }
+            // Just verify it computes without panicking and returns a complex number
+            assert!(result.re.is_finite());
+            assert!(result.im.is_finite());
+        }
 
-    #[test]
-    fn case_warburg_elements() {
-        let mut elements = HashMap::new();
-        let freq = 1.;
+        #[test]
+        fn case_warburg_elements() {
+            let mut elements = HashMap::new();
+            let freq = 1.;
 
-        // Test Wo (open Warburg) and Ws (short Warburg)
-        elements.insert("R", vec![Element::R { R: 50. }].into_iter());
-        elements.insert("Wo", vec![Element::Wo { Z0: 100., tau: 0.1 }].into_iter());
-        elements.insert("Ws", vec![Element::Ws { Z0: 100., tau: 0.1 }].into_iter());
+            // Test Wo (open Warburg) and Ws (short Warburg)
+            elements.insert("R", vec![Element::R { R: 50. }].into_iter());
+            elements.insert("Wo", vec![Element::Wo { Z0: 100., tau: 0.1 }].into_iter());
+            elements.insert("Ws", vec![Element::Ws { Z0: 100., tau: 0.1 }].into_iter());
 
-        // Circuit: R in series with Wo, parallel with Ws
-        let mut circuit_model = CircuitModel::new(String::from("RWo(Ws)"), elements);
-        let result = circuit_model.impedance(freq);
+            // Circuit: R in series with Wo, parallel with Ws
+            let mut circuit_model = CircuitModel::new(String::from("RWo(Ws)"), elements);
+            let result = circuit_model.impedance(freq);
 
-        assert!(result.re.is_finite());
-        assert!(result.im.is_finite());
-    }
+            assert!(result.re.is_finite());
+            assert!(result.im.is_finite());
+        }
 
-    #[test]
-    fn case_complex_multi_char() {
-        let mut elements = HashMap::new();
-        let freq = 10.;
+        #[test]
+        fn case_complex_multi_char() {
+            let mut elements = HashMap::new();
+            let freq = 10.;
 
-        // Test TLMQ and Zarc elements
-        elements.insert("R", vec![Element::R { R: 10. }].into_iter());
-        elements.insert(
-            "TLMQ",
-            vec![Element::TLMQ {
-                Rion: 50.,
-                Qs: 1e-6,
-                gamma: 0.85,
-            }]
-            .into_iter(),
-        );
-        elements.insert(
-            "Zarc",
-            vec![Element::Zarc {
-                R: 100.,
-                tau_k: 0.01,
-                gamma: 0.9,
-            }]
-            .into_iter(),
-        );
+            // Test TLMQ and Zarc elements
+            elements.insert("R", vec![Element::R { R: 10. }].into_iter());
+            elements.insert(
+                "TLMQ",
+                vec![Element::TLMQ {
+                    Rion: 50.,
+                    Qs: 1e-6,
+                    gamma: 0.85,
+                }]
+                .into_iter(),
+            );
+            elements.insert(
+                "Zarc",
+                vec![Element::Zarc {
+                    R: 100.,
+                    tau_k: 0.01,
+                    gamma: 0.9,
+                }]
+                .into_iter(),
+            );
 
-        // Circuit: R in series with parallel TLMQ and Zarc
-        let mut circuit_model = CircuitModel::new(String::from("R(TLMQZarc)"), elements);
-        let result = circuit_model.impedance(freq);
+            // Circuit: R in series with parallel TLMQ and Zarc
+            let mut circuit_model = CircuitModel::new(String::from("R(TLMQZarc)"), elements);
+            let result = circuit_model.impedance(freq);
 
-        assert!(result.re.is_finite());
-        assert!(result.im.is_finite());
-        assert!(result.re > 0.); // Should have positive real part
+            assert!(result.re.is_finite());
+            assert!(result.im.is_finite());
+            assert!(result.re > 0.); // Should have positive real part
+        }
     }
 }
