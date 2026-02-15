@@ -2,7 +2,7 @@ use std::{collections::HashMap, vec::IntoIter};
 
 use num::complex::Complex32;
 
-use crate::elements::Element;
+use crate::{elements::Element, impedance_data::ImpedanceData};
 
 pub struct CircuitModel<'a> {
     circuit: String,
@@ -118,6 +118,10 @@ impl<'a> CircuitModel<'a> {
         // Single-character elements: R, C, L, W, G, K, T
         let one_char = &circuit[idx..idx + 1];
         (one_char, 1)
+    }
+
+    pub fn fit(&self, impedance_data: ImpedanceData) -> Self {
+        todo!()
     }
 }
 
