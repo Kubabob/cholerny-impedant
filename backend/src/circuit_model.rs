@@ -1,5 +1,6 @@
 use std::{collections::HashMap, vec::IntoIter};
 
+use argmin::core::{CostFunction, Gradient};
 use num::complex::Complex32;
 
 use crate::{elements::Element, impedance_data::ImpedanceData};
@@ -122,6 +123,22 @@ impl<'a> CircuitModel<'a> {
 
     pub fn fit(&self, impedance_data: ImpedanceData) -> Self {
         todo!()
+    }
+}
+
+impl CostFunction for CircuitModel<'_> {
+    type Output = f32;
+    type Param = Vec<f32>;
+    fn cost(&self, param: &Self::Param) -> Result<Self::Output, argmin_math::Error> {
+        Ok(0.)
+    }
+}
+
+impl Gradient for CircuitModel<'_> {
+    type Param = Vec<f32>;
+    type Gradient = Vec<f32>;
+    fn gradient(&self, param: &Self::Param) -> Result<Self::Gradient, argmin_math::Error> {
+        Ok(Vec::new())
     }
 }
 

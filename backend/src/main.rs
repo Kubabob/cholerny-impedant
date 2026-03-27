@@ -3,6 +3,7 @@ use regex::Error;
 
 use crate::elements::Element;
 
+mod circuit_fitter;
 mod circuit_model;
 mod elements;
 mod impedance_data;
